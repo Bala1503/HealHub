@@ -18,7 +18,7 @@ const transporter = nodemailer.createTransport({
 });
 
 router.use((req, res, next) => {
-  if (req.originalUrl.startsWith('/checkout-success/')) {
+  if (req.originalUrl === '/checkout-success/:id') {
     // Parse raw body only for the webhook endpoint
     rawBody(req, {
       length: req.headers['content-length'],
@@ -40,7 +40,7 @@ router.post('/:id', async(req, res, next) => {
   const sig = req.headers['stripe-signature'];
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   let event;
-  const endpointSecret = 'whsec_7256d0bfddca3197b6eceb40a55b59582a12b4737409e52c56ec97dbbfe59604';
+  const endpointSecret = 'whsec_FnKD3fEh1sRJ3Vqrkff59oppgFJ8lmwC';
   
   try {
     event = stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret);
