@@ -18,7 +18,7 @@ const transporter = nodemailer.createTransport({
 });
 
 router.use((req, res, next) => {
-  if (req.originalUrl === '/checkout-success/:id') {
+  if (req.originalUrl.startsWith('/checkout-success/')) {
     // Parse raw body only for the webhook endpoint
     rawBody(req, {
       length: req.headers['content-length'],
