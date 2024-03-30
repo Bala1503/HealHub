@@ -48,6 +48,7 @@ router.post('/:id', async(req, res, next) => {
     console.error('Webhook signature verification failed.', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
+  console.log(event.type);
 
   switch (event.type) {
     case 'checkout.session.completed':
