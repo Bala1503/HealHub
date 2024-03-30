@@ -1,6 +1,7 @@
 import User from "../models/UserSchema.js";
 import Doctor from "../models/DoctorSchema.js";
 import Stripe from 'stripe'
+import { useHistory } from 'react-router-dom';
 
 export const getCheckoutSession = async(req,res)=>{
     try {
@@ -12,7 +13,7 @@ export const getCheckoutSession = async(req,res)=>{
         const session = await stripe.checkout.sessions.create({
             payment_method_types:['card'],
             mode:'payment',
-            success_url:`${process.env.CLIENT_SITE_URL}/checkout-success/${doctor.id}`,
+            success_url:'',
             cancel_url:`${req.protocol}://${req.get('host')}/doctors/${doctor.id}`,
             client_reference_id:req.params.doctorId,
             customer_email:user?.email,
@@ -37,7 +38,9 @@ export const getCheckoutSession = async(req,res)=>{
             }
         })
 
-        
+        const history = useHistory();
+        session.success_url = `${process.env.CLIENT_SITE_URL}/checkout-success/${doctor.id}`;
+        history.push(session.success_url);
 
         res.status(200).json({success:true,message:'Successfully Paid',session})
 
