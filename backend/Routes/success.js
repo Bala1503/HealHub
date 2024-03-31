@@ -124,7 +124,6 @@ router.post('/:id', async(req, res, next) => {
               console.log('Email sent:', info.response);
             }
           });
-          window.location.href="https://healhub7.netlify.app/checkout-success/:id"
         }
         res.json({received:true});
       } catch (err) {
