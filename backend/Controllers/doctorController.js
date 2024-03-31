@@ -61,6 +61,7 @@ export const getAllDoctor = async (req, res) => {
 export const getDoctorProfile = async (req, res) => {
     const doctorId = req.userId;
     try {
+        // Check if doctor exists in Doctor schema
         const doctor = await Doctor.findById(doctorId);
         if (!doctor) {
             return res.status(404).json({ success: false, message: "Doctor not found" });
@@ -69,15 +70,18 @@ export const getDoctorProfile = async (req, res) => {
         // Get today's date
         const today = new Date();
         today.setHours(0, 0, 0, 0); // Set hours, minutes, seconds, and milliseconds to 0 for comparison
-        const {password,...rest}=doctor._doc;
+        const { password, ...rest } = doctor._doc;
         
         // Find appointments created today
         const appointments = await Booking.find({
             doctor: doctorId,
             createdAt: { $gte: today } // Filter appointments created today or later
-        });
+        }).populate('user'); // Populate the 'user' field to get corresponding user details
         
-        res.status(200).json({ success: true, message: "Profile info is getting", data: { ...rest, appointments } });
+        // Check if corresponding users exist in User schema for each appointment
+        const validAppointments = appointments.filter(appointment => appointment.user !== null);
+
+        res.status(200).json({ success: true, message: "Profile info is getting", data: { ...rest, appointments: validAppointments } });
     } catch (err) {
         res.status(500).json({ success: false, message: "Something went wrong, cannot get" });
     }
