@@ -136,4 +136,23 @@ router.post('/:id', async(req, res, next) => {
   }
 });
 
+// Define a separate route handler for the /checkout-success/:id endpoint
+router.get('/checkout-success/:id', async (req, res) => {
+  // Retrieve the booking ID from the request parameters
+  const bookingId = req.params.id;
+
+  try {
+    // Fetch the booking details from the database using the booking ID
+    const booking = await Booking.findById(bookingId).populate('doctor').populate('user');
+    
+    // Render the checkout success page with the booking details
+    res.render('checkout-success', { booking });
+  } catch (err) {
+    // Handle errors appropriately
+    console.error('Error fetching booking details:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
 export default router;
